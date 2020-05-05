@@ -26,8 +26,11 @@ func startApi() {
 	r.GET("/", func(c *gin.Context) {
 		json.NewEncoder(c.Writer).Encode("pong")
 	})
-
-	r.Run(":" + os.Getenv("API_PORT"))
+	if os.Getenv("ENV") == "prod" {
+		r.RunTLS(":" + os.Getenv("API_PORT"), os.Getenv("CERT_PATH"), os.Getenv("KEY_PATH"))
+	} else {
+		r.Run(":" + os.Getenv("API_PORT"))
+	}
 }
 
 func writErrorResponse(w http.ResponseWriter, err error, code int) {
