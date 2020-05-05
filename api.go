@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -14,12 +13,6 @@ import (
 
 func startApi() {
 	r := gin.New()
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:  []string{"*"},
-		AllowMethods:  []string{"POST", "GET"},
-		AllowHeaders:  []string{"Origin"},
-		ExposeHeaders: []string{"Content-Length"},
-	}))
 
 	r.Use(jsonMiddleware)
 	r.POST("/", sendEmailHandler)
@@ -49,7 +42,7 @@ func jsonMiddleware(c *gin.Context) {
 }
 
 func recaptcha(token string) (bool, interface{}) {
-	if os.Getenv("ENV") != "prod" {
+	if os.Getenv("ENV") != "prod" && os.Getenv("RECAPTCHA_ON") == "true"{
 		return true, nil
 	}
 
