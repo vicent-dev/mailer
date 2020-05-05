@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
@@ -13,6 +14,12 @@ import (
 
 func startApi() {
 	r := gin.New()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:  []string{os.Getenv("API_ORIGIN_ALLOWED")},
+		AllowMethods:  []string{"POST", "GET"},
+		AllowHeaders:  []string{"Origin"},
+		ExposeHeaders: []string{"Content-Length"},
+	}))
 
 	r.Use(jsonMiddleware)
 	r.POST("/", sendEmailHandler)
@@ -20,12 +27,7 @@ func startApi() {
 		json.NewEncoder(c.Writer).Encode("pong")
 	})
 
-
-	if os.Getenv("ENV") == "prod" {
-		r.RunTLS(":" + os.Getenv("API_PORT"), os.Getenv("CERT_PATH"),os.Getenv("KEY_PATH"))
-	} else {
-		r.Run(":" + os.Getenv("API_PORT"))
-	}
+	r.Run(":" + os.Getenv("API_PORT"))
 }
 
 func writErrorResponse(w http.ResponseWriter, err error, code int) {
@@ -42,7 +44,7 @@ func jsonMiddleware(c *gin.Context) {
 }
 
 func recaptcha(token string) (bool, interface{}) {
-	if os.Getenv("ENV") != "prod" && os.Getenv("RECAPTCHA_ON") == "true"{
+	if os.Getenv("ENV") != "prod" || os.Getenv("RECAPTCHA_ON") != "true" {
 		return true, nil
 	}
 
