@@ -29,7 +29,7 @@ func startApi() {
 
 
 	if os.Getenv("ENV") == "prod" {
-		r.RunTLS(os.Getenv("SERVERNAME")+":" + os.Getenv("API_PORT"), os.Getenv("CERT_PATH"),os.Getenv("KEY_PATH"))
+		r.RunTLS(":" + os.Getenv("API_PORT"), os.Getenv("CERT_PATH"),os.Getenv("KEY_PATH"))
 	} else {
 		r.Run(":" + os.Getenv("API_PORT"))
 	}
