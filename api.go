@@ -44,7 +44,7 @@ func jsonMiddleware(c *gin.Context) {
 }
 
 func recaptcha(token string) (bool, interface{}) {
-	if os.Getenv("ENV") != "prod" || os.Getenv("RECAPTCHA_ON") != "true" {
+	if os.Getenv("ENV") != "prod" || os.Getenv("RECAPTCHA_ON") == "false" {
 		return true, nil
 	}
 
