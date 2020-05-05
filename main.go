@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
@@ -20,5 +21,8 @@ func main() {
 		return
 	}
 
+	if os.Getenv("ENV") == "prod" {
+		gin.SetMode(gin.ReleaseMode)
+	}
 	startApi()
 }

@@ -2,16 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"golang.org/x/crypto/acme/autocert"
 	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/autotls"
-
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"os"
 )
@@ -30,12 +26,7 @@ func startApi() {
 
 
 	if os.Getenv("ENV") == "prod" {
-		m := autocert.Manager{
-			Prompt:     autocert.AcceptTOS,
-			HostPolicy: autocert.HostWhitelist(os.Getenv("SERVERNAME"), "localhost"),
-			Cache:      autocert.DirCache("/var/www/.cache"),
-		}
-		log.Fatal(autotls.RunWithManager(r, &m))
+		r.RunTLS(":" + os.Getenv("API_PORT"), os.Getenv("CERT_PATH"),os.Getenv("KEY_PATH"))
 	} else {
 		r.Run(":" + os.Getenv("API_PORT"))
 	}
