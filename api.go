@@ -15,14 +15,17 @@ import (
 func startApi() {
 	r := gin.New()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:  []string{"http://localhost", "https://" + os.Getenv("API_ORIGIN_ALLOWED")},
-		AllowMethods:  []string{"POST"},
+		AllowOrigins:  []string{"*"},
+		AllowMethods:  []string{"POST", "GET"},
 		AllowHeaders:  []string{"Origin"},
 		ExposeHeaders: []string{"Content-Length"},
 	}))
 
 	r.Use(jsonMiddleware)
 	r.POST("/", sendEmailHandler)
+	r.GET("/", func(c *gin.Context) {
+		json.NewEncoder(c.Writer).Encode("pong")
+	})
 
 
 	if os.Getenv("ENV") == "prod" {
